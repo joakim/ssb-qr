@@ -1,21 +1,11 @@
-import {
-	fromFeedSigil,
-	fromMessageSigil,
-	fromBlobSigil,
-	toFeedSigil,
-	toMessageSigil,
-	toBlobSigil,
-	isSSBURI,
-} from 'ssb-uri2'
+import { fromFeedSigil, fromMessageSigil, fromBlobSigil, isSSBURI } from 'ssb-uri2'
 
-type Sigils = {
-	[index: string]: { to: Function; from: Function }
-}
+type Sigils = { [index: string]: Function }
 
 const sigils: Sigils = {
-	'@': { to: toFeedSigil, from: fromFeedSigil },
-	'%': { to: toMessageSigil, from: fromMessageSigil },
-	'&': { to: toBlobSigil, from: fromBlobSigil },
+	'@': fromFeedSigil,
+	'%': fromMessageSigil,
+	'&': fromBlobSigil,
 }
 
 function sigilLinkToSSBURI(link: string) {
@@ -23,7 +13,7 @@ function sigilLinkToSSBURI(link: string) {
 	if (!sigils[sigil]) {
 		return null
 	}
-	return sigils[sigil].from(link)
+	return sigils[sigil](link)
 }
 
 function isSigilLink(link: string) {
@@ -38,7 +28,15 @@ function isSigilLink(link: string) {
 }
 
 export function validate(link: string) {
-	return isSSBURI(link) || isSigilLink(link)
+	let isURI
+
+	try {
+		isURI = isSSBURI(link) // throws on malformed URLs
+	} catch (err) {
+		// silent treatment
+	}
+
+	return isURI || isSigilLink(link)
 }
 
 export function normalize(link: string) {
@@ -47,12 +45,14 @@ export function normalize(link: string) {
 	if (isSigilLink(link)) {
 		uri = sigilLinkToSSBURI(link)
 
-		// Use deprecated URIs, because they are the only ones that work
+		// Use deprecated URIs, because they are the only ones that work in Manyverse
 		// @todo ask stalz why Manyverse doesn't handle the new URIs
 		if (uri.includes('/classic/')) {
-			if (uri.startsWith('ssb:feed')) uri = uri.replace('/classic/', '/ed25519/')
-			if (uri.startsWith('ssb:message')) uri = uri.replace('/classic/', '/sha256/')
-			if (uri.startsWith('ssb:blob')) uri = uri.replace('/classic/', '/sha256/')
+			if (uri.startsWith('ssb:feed')) {
+				uri = uri.replace('/classic/', '/ed25519/')
+			} else if (uri.startsWith('ssb:message') || uri.startsWith('ssb:blob')) {
+				uri = uri.replace('/classic/', '/sha256/')
+			}
 		}
 	}
 
