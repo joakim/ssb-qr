@@ -11,11 +11,7 @@
 	let text: string
 	$: {
 		valid = link.length > 0 && validate(link)
-		if (valid) {
-			text = normalize(link)
-		} else {
-			text = link
-		}
+		text = valid ? normalize(link) : link
 	}
 
 	$: qrSvg = vkQr.createQR(text, {

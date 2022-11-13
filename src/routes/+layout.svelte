@@ -1,4 +1,4 @@
-<h1>Scuttlebutt QR Code</h1>
+<h1>Scuttlebutt QR Code Generator</h1>
 
 <slot />
 
