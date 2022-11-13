@@ -13,6 +13,8 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-netlify": "1.0.0-next.84",
+		"@sveltejs/adapter-static": "1.0.0-next.48",
 		"@sveltejs/kit": "next",
 		"@vkontakte/vk-qr": "^2.0.13",
 		"prettier": "^2.6.2",
