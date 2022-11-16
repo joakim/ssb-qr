@@ -25,14 +25,16 @@
 	let offset: number
 	$: offset = qr?.offsetTop
 
-	let innerWidth: number
-	$: size = innerWidth < 512 ? 256 : 512
-
 	let resizing = false
 	function resize(event: MouseEvent) {
 		if (resizing) {
 			size = Math.max(256, event.y - offset)
 		}
+	}
+
+	let innerWidth: number
+	$: if (resizing = false && innerWidth < 512) {
+		size = 256
 	}
 </script>
 
