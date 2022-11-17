@@ -33,7 +33,7 @@
 	}
 
 	let innerWidth: number
-	$: if (resizing = false && innerWidth < 512) {
+	$: if (resizing === false && innerWidth < 512) {
 		size = 256
 	}
 </script>
