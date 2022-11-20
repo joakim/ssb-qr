@@ -1,11 +1,11 @@
-<h1>Scuttlebutt QR Code Generator</h1>
-
 <slot />
 
 <style global lang="scss">
 	body {
 		display: flex;
 		justify-content: center;
+		padding-top: 3rem;
+		padding-bottom: 3rem;
 	}
 
 	h1 {
