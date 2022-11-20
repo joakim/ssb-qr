@@ -21,19 +21,21 @@
 		foregroundColor: !link || valid ? color : 'crimson',
 	})
 
+	function open() {
+		if (valid) window.location.assign(text)
+	}
+
 	let qr: HTMLElement
 	let offset: number
 	$: offset = qr?.offsetTop
 
 	let resizing = false
 	function resize(event: MouseEvent) {
-		if (resizing) {
-			size = Math.max(256, event.y - offset)
-		}
+		if (resizing) size = Math.max(256, event.y - offset)
 	}
 
 	let innerWidth: number
-	$: if (resizing === false && innerWidth < 512) {
+	$: if (!resizing && innerWidth < 512) {
 		size = 256
 	}
 </script>
@@ -42,12 +44,14 @@
 	bind:innerWidth
 	on:mousemove={resize}
 	on:mouseup={() => {
-		resizing = false
+		if (resizing) resizing = false
 	}}
 />
 
-<div bind:this={qr} class="qr" style="width: {size}px; height: {size}px;">
-	{@html qrSvg}
+<div bind:this={qr} class="qr" class:valid style="width: {size}px; height: {size}px;">
+	<div class="svg" on:click={open} on:keypress={({ key }) => key === 'Enter' && open()}>
+		{@html qrSvg}
+	</div>
 	<div class="drag" on:mousedown={() => (resizing = true)} />
 </div>
 
@@ -61,7 +65,11 @@
 			height: 80vh !important;
 		}
 
-		> svg {
+		&.valid {
+			cursor: pointer;
+		}
+
+		svg {
 			width: 100% !important;
 			height: 100% !important;
 		}
